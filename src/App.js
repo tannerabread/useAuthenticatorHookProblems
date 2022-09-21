@@ -1,25 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import { Authenticator, useAuthenticator } from '@aws-amplify/ui-react';
+import '@aws-amplify/ui-react/styles.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+function LoggedIn() {
+    const { user, signOut } = useAuthenticator((context) => [context.user]);
+
+    return (
+        <>
+            <h2>Welcome, {user.username}!</h2>
+            <button onClick={signOut}>Sign Out</button>
+        </>
+    );
 }
 
-export default App;
+function NotLoggedIn() {
+    const { toFederatedSignIn } = useAuthenticator();
+
+    return (
+        <>
+            <button onClick={() => toFederatedSignIn('Amazon')}>Login With Amazon</button>
+        </>
+    );
+}
+
+function App() {
+    const { authStatus } = useAuthenticator(context => [context.authStatus]);
+
+    return (
+        <>
+            {authStatus === 'configuring' && 'Loading...'}
+            {authStatus !== 'authenticated' ? <NotLoggedIn /> : <LoggedIn />}
+        </>
+    )
+}
+
+export default () => (
+    <Authenticator.Provider>
+        <App />
+    </Authenticator.Provider>
+);
