@@ -17,6 +17,7 @@ function NotLoggedIn() {
 
     return (
         <>
+        {/* <Authenticator /> */}
             <button onClick={() => toFederatedSignIn('Amazon')}>Login With Amazon</button>
         </>
     );
